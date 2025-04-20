@@ -7,13 +7,15 @@ const {
   updateUserProfile,
   addToFavorites,
   removeFromFavorites,
-  getUsers
+  getUsers,
+  getAgents
 } = require('../controllers/userController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 // Public routes
 router.post('/', registerUser);
 router.post('/login', loginUser);
+router.get('/agents', getAgents);
 
 // Protected routes
 router.get('/profile', protect, getUserProfile);

@@ -211,12 +211,16 @@ const getFeaturedProperties = async (req, res) => {
   }
 };
 
-// @desc    Search properties by location with radius
+// @desc    Get nearby properties
 // @route   GET /api/properties/nearby
 // @access  Public
 const getNearbyProperties = async (req, res) => {
   try {
-    const { lng, lat, radius = 10 } = req.query; // radius in kilometers
+    const { lat, lng, radius = 10 } = req.query;
+
+    if (!lat || !lng) {
+      return res.status(400).json({ message: 'Latitude and longitude are required' });
+    }
 
     // Convert radius from kilometers to meters (required by MongoDB)
     const radiusInMeters = radius * 1000;
@@ -240,6 +244,21 @@ const getNearbyProperties = async (req, res) => {
   }
 };
 
+// @desc    Get properties by logged in user
+// @route   GET /api/properties/user
+// @access  Private
+const getUserProperties = async (req, res) => {
+  try {
+    const properties = await Property.find({ owner: req.user._id })
+      .populate('owner', 'name email phone')
+      .sort({ createdAt: -1 });
+
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createProperty,
   getProperties,
@@ -247,5 +266,6 @@ module.exports = {
   updateProperty,
   deleteProperty,
   getFeaturedProperties,
-  getNearbyProperties
+  getNearbyProperties,
+  getUserProperties
 }; 

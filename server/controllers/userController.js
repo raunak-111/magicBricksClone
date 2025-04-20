@@ -204,6 +204,30 @@ const getUsers = async (req, res) => {
   }
 };
 
+// @desc    Get all agents
+// @route   GET /api/users/agents
+// @access  Public
+const getAgents = async (req, res) => {
+  try {
+    const agents = await User.find({ role: 'agent' })
+      .select('-password -favorites -isVerified')
+      .lean();
+
+    // Add additional fields for better UI presentation
+    const enhancedAgents = agents.map(agent => ({
+      ...agent,
+      experience: Math.floor(Math.random() * 10) + 3, // Mock field for now
+      bio: `Experienced real estate agent specializing in properties in ${agent.name.split(' ')[0]}'s region.`, // Mock field
+      listings: Math.floor(Math.random() * 30) + 5, // Can be replaced with actual count
+      ratings: (Math.random() * 1 + 4).toFixed(1) // Mock rating between 4.0-5.0
+    }));
+
+    res.json(enhancedAgents);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -211,5 +235,6 @@ module.exports = {
   updateUserProfile,
   addToFavorites,
   removeFromFavorites,
-  getUsers
+  getUsers,
+  getAgents
 }; 
