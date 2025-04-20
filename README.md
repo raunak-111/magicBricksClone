@@ -1,5 +1,4 @@
 
-Markdown
 # MagicBricksClone - Server
 
 This is the server-side implementation of the MagicBricksClone project. It is responsible for handling the backend operations, including APIs, database management, and business logic.
